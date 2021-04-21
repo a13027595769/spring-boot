@@ -16,6 +16,7 @@
 
 package org.springframework.boot.devtools.system;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -49,21 +50,11 @@ public final class DevToolsEnablementDeducer {
 	 * @return {@code true} if devtools should be enabled
 	 */
 	public static boolean shouldEnable(Thread thread) {
-		for (StackTraceElement element : thread.getStackTrace()) {
-			if (isSkippedStackElement(element)) {
-				return false;
-			}
-		}
-		return true;
+		return Arrays.stream(thread.getStackTrace()).noneMatch(DevToolsEnablementDeducer::isSkippedStackElement);
 	}
 
 	private static boolean isSkippedStackElement(StackTraceElement element) {
-		for (String skipped : SKIPPED_STACK_ELEMENTS) {
-			if (element.getClassName().startsWith(skipped)) {
-				return true;
-			}
-		}
-		return false;
+		return SKIPPED_STACK_ELEMENTS.stream().anyMatch(skipped -> element.getClassName().startsWith(skipped));
 	}
 
 }

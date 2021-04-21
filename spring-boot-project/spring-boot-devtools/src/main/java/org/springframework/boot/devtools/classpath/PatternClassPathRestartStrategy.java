@@ -20,6 +20,8 @@ import org.springframework.boot.devtools.filewatch.ChangedFile;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 
+import java.util.Arrays;
+
 /**
  * Ant style pattern based {@link ClassPathRestartStrategy}.
  *
@@ -43,12 +45,7 @@ public class PatternClassPathRestartStrategy implements ClassPathRestartStrategy
 
 	@Override
 	public boolean isRestartRequired(ChangedFile file) {
-		for (String pattern : this.excludePatterns) {
-			if (this.matcher.match(pattern, file.getRelativeName())) {
-				return false;
-			}
-		}
-		return true;
+		return Arrays.stream(this.excludePatterns).noneMatch(pattern -> this.matcher.match(pattern, file.getRelativeName()));
 	}
 
 }

@@ -17,6 +17,7 @@
 package org.springframework.boot.devtools.restart.server;
 
 import java.net.URL;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -82,12 +83,7 @@ public class DefaultSourceDirectoryUrlFilter implements SourceDirectoryUrlFilter
 	}
 
 	private String stripCommonEnds(String string) {
-		for (String ending : COMMON_ENDINGS) {
-			if (string.endsWith(ending)) {
-				return string.substring(0, string.length() - ending.length());
-			}
-		}
-		return string;
+		return Arrays.stream(COMMON_ENDINGS).filter(string::endsWith).findFirst().map(ending -> string.substring(0, string.length() - ending.length())).orElse(string);
 	}
 
 }

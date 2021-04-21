@@ -17,12 +17,8 @@
 package org.springframework.boot.devtools.restart.classloader;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.management.loading.ClassLoaderRepository;
 
@@ -130,22 +126,12 @@ public class ClassLoaderFiles implements ClassLoaderFileRepository, Serializable
 	 * @return the size of the collection
 	 */
 	public int size() {
-		int size = 0;
-		for (SourceDirectory sourceDirectory : this.sourceDirectories.values()) {
-			size += sourceDirectory.getFiles().size();
-		}
-		return size;
+		return this.sourceDirectories.values().stream().mapToInt(sourceDirectory -> sourceDirectory.getFiles().size()).sum();
 	}
 
 	@Override
 	public ClassLoaderFile getFile(String name) {
-		for (SourceDirectory sourceDirectory : this.sourceDirectories.values()) {
-			ClassLoaderFile file = sourceDirectory.get(name);
-			if (file != null) {
-				return file;
-			}
-		}
-		return null;
+		return this.sourceDirectories.values().stream().map(sourceDirectory -> sourceDirectory.get(name)).filter(Objects::nonNull).findFirst().orElse(null);
 	}
 
 	/**

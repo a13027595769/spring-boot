@@ -49,12 +49,7 @@ class SilentExitExceptionHandler implements UncaughtExceptionHandler {
 	}
 
 	private boolean isJvmExiting(Thread exceptionThread) {
-		for (Thread thread : getAllThreads()) {
-			if (thread != exceptionThread && thread.isAlive() && !thread.isDaemon()) {
-				return false;
-			}
-		}
-		return true;
+		return Arrays.stream(getAllThreads()).noneMatch(thread -> thread != exceptionThread && thread.isAlive() && !thread.isDaemon());
 	}
 
 	protected Thread[] getAllThreads() {
